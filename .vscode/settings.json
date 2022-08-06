@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.uss": "css",
+        "*.uxml": "xml",
+        "string": "cpp"
+    }
+}

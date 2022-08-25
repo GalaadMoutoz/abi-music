@@ -5,30 +5,34 @@
 using namespace std;
 
 // microSD Card Reader connections
-#define SD_CS 5
-#define SPI_MOSI 23
-#define SPI_MISO 19
-#define SPI_SCK 18
+#define VSPI_CS 5
+#define VSPI_MOSI 23
+#define VSPI_MISO 19
+#define VSPI_SCK 18
 
 // I2S Connections
-#define I2S_DOUT 22
-#define I2S_BCLK 26
-#define I2S_LRC 25
+#define I2S_DOUT 25
+#define I2S_BCLK 27
+#define I2S_LRC 26
 
 class SoundManager
 {
 private:
     Audio audio;
+    SPIClass *vspi = NULL;
 
 public:
     void setup()
     {
-        pinMode(SD_CS, OUTPUT);
-        digitalWrite(SD_CS, HIGH);
+        Serial.println("Initializing Sound Manager ...");
 
-        SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
+        pinMode(VSPI_CS, OUTPUT);
+        digitalWrite(VSPI_CS, HIGH);
 
-        if (!SD.begin(SD_CS))
+        vspi = new SPIClass(VSPI);
+        vspi->begin(VSPI_SCK, VSPI_MISO, VSPI_MOSI, VSPI_CS);
+
+        if (!SD.begin(VSPI_CS, *vspi))
         {
             Serial.println("Error accessing microSD card!");
             while (true)
@@ -36,11 +40,14 @@ public:
         }
 
         audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-        audio.setVolume(5);
+        audio.setVolume(20);
+
+        Serial.println("Sound Manager is READY.");
     }
 
     void play(String path)
     {
+        audio.stopSong();
         audio.connecttoFS(SD, path.c_str());
     }
 

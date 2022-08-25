@@ -5,19 +5,31 @@
 
 SoundManager soundManager;
 InputManager inputManager;
+volatile int64_t lastCheckTime = 0;
 
 void setup()
 {
   Serial.begin(9600);
   soundManager.setup();
-  soundManager.play("/test.mp3");
+  inputManager.setup();
+
+  Serial.println("Systems are online. Ready to play.");
+  soundManager.play("boot.mp3");
 }
 
 void loop()
 {
   soundManager.loop();
 
+  if (esp_timer_get_time() < lastCheckTime + 1000000)
+    return;
+
+  lastCheckTime = esp_timer_get_time();
+
   String filePath = inputManager.getNfcString();
   if (filePath != "")
-    soundManager.play("/" + filePath);
+  {
+    Serial.println(filePath);
+    soundManager.play(filePath);
+  }
 }

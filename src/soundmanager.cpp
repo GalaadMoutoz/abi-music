@@ -40,7 +40,7 @@ public:
         }
 
         audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-        audio.setVolume(20);
+        audio.setVolume(10);
 
         Serial.println("Sound Manager is READY.");
     }

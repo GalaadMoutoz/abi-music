@@ -1,15 +1,19 @@
 #include <Arduino.h>
 #include <string.h>
+#include "soc/soc.h"
+#include "soc/rtc.h"
 #include "soundmanager.cpp"
 #include "inputmanager.cpp"
 
 SoundManager soundManager;
 InputManager inputManager;
-volatile int64_t lastCheckTime = 0;
+int64_t lastCheckTime = 0;
 
 void setup()
 {
-  Serial.begin(9600);
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+
+  Serial.begin(115200);
   soundManager.setup();
   inputManager.setup();
 
